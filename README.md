@@ -442,8 +442,10 @@ Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya me
 
 ## Berikut adalah scriptnya :
 
-`#!/bin/bash
-conf crontab`
+`#!/bin/bash`
+
+`conf crontab`
+
 ` * * * * * /home/kyfaiyya/log/minute_log.sh`
 
 `TIMESTAMP=$(date +"%Y%m%d%H%M%S")`
