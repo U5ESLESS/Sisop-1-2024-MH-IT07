@@ -1,2 +1,0 @@
-admin@gmail.com:admin1:doraemon:nobita:U2F5YWFkbWlu:admin
-user@gmail.com:user:naruto:hinata:U2F5YXVzZXI=:user
