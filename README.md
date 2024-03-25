@@ -471,7 +471,7 @@ Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya me
 `MEM_INFO=$(free -m | awk 'NR==2{print $2","$3","$4","$5","$6","$7}')`  Mengambil informasi memori menggunakan perintah free -m, kemudian menggunakan awk untuk mencetak baris kedua yang berisi informasi memori dalam format yang dipisahkan dengan koma.
 
 `SWAP_INFO=$(awk '/SwapTotal/{total=$2}/SwapFree/{free=$2}END{print total","(total-free)","free}' /proc/meminfo)`  Mengambil informasi swap menggunakan awk untuk memproses file /proc/meminfo dan mencetak total swap, swap yang digunakan, dan swap yang tersedia dalam format yang dipisahkan dengan koma.
-DEFAULT_PATH="/home/kyfaiyya" - Menetapkan path default yang akan dimonitor ukuran direktorinya.
+`DEFAULT_PATH="/home/kyfaiyya"` - Menetapkan path default yang akan dimonitor ukuran direktorinya.
 
 `PATH_SIZE=$(/usr/bin/du -sh "$DEFAULT_PATH" | /usr/bin/awk '{print $1}')` Menggunakan perintah du untuk mendapatkan ukuran direktori yang telah ditetapkan, dan awk untuk mencetak ukuran tersebut.
 
