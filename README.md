@@ -410,3 +410,72 @@ Script ini adalah sebuah program shell yang berfungsi sebagai sistem login untuk
 - Aktivitas login yang gagal akan dicatat dalam file `auth.log` beserta timestamp dan detail kesalahan.
 
 Selesai
+
+### Readme
+## Soal no 4
+
+## langkah Pengerjaan
+ Pertama saya membuat sebuah direktory bernama log untuk menyimpan semua file log
+
+ Kemudian di dalam direktori /home/kyfaiyya/log saya membuat sebuah file log bernama minute_log.sh dengan command `sudo nano minute_log.sh` yang akan di jadikan tempat script di eksekusi.
+
+
+ Di dalam soal pada poin (a) kita diminta untuk membuat program monitoring resource pada PC kita. Program tersebut harus dapat melakukan hal-hal berikut :
+- Memonitor penggunaan RAM menggunakan perintah `free -m`.
+- Memonitor ukuran direktori tertentu dengan menggunakan perintah `du -sh <target_path>`.
+- Mencatat semua metrik yang didapatkan dari hasil `free -m` dan ukuran direktori dari hasil `du -sh <target_path>`.
+- Memasukkan semua metrik tersebut ke dalam file log dengan nama `metrics_{YmdHms}.log`, di mana `{YmdHms}` adalah timestamp saat script dijalankan.
+- Script harus dapat berjalan secara otomatis setiap menit.
+
+
+Untuk menyelesaikan soal ini, kita akan membuat sebuah script Bash yang memenuhi semua persyaratan yang diminta. Script ini akan mengambil metrik penggunaan RAM dan ukuran direktori, kemudian menyimpannya dalam file log dengan nama yang diberi timestamp.
+
+Berikut adalah langkah-langkah yang dilakukan oleh script:
+
+- Mengambil timestamp saat ini dalam format `YYYYMMDDHHmmss` untuk digunakan sebagai nama file log.
+- Mengambil informasi penggunaan RAM menggunakan perintah `free -m` dan memproses hasilnya dengan `awk` untuk mendapatkan metrik yang diinginkan.
+- Mengambil informasi ukuran direktori `/home/kyfaiyya/` menggunakan perintah `du -sh /home/kyfaiyya/` dan memproses hasilnya dengan awk untuk mendapatkan ukuran direktori.
+- Membuat direktori log jika belum ada.
+- Menulis semua metrik ke dalam file log dengan nama `metrics_{YmdHms}.log`.
+
+Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya menggunakan crontab untuk melakukan eksekusi terjadwal caranya adalah dengan `crontab -e` untuk menulis crontab baru, lalu mengisi dengan `* * * * * /home/kyfaiyya/log/minute_log.sh`. ini akan mengeksekusi file `minute_log.sh` setiap menit.
+
+## Berikut adalah scriptnya :
+
+`#!/bin/bash
+conf crontab`
+` * * * * * /home/kyfaiyya/log/minute_log.sh`
+
+`TIMESTAMP=$(date +"%Y%m%d%H%M%S")`
+
+`MEM_INFO=$(free -m | awk 'NR==2{print $2","$3","$4","$5","$6","$7}')`
+
+`SWAP_INFO=$(awk '/SwapTotal/{total=$2}/SwapFree/{free=$2}END{print total","(total-free)","free}' /proc/meminfo)`
+
+`DEFAULT_PATH="/home/kyfaiyya"`
+
+`PATH_SIZE=$(/usr/bin/du -sh "$DEFAULT_PATH" | /usr/bin/awk '{print $1}')`
+
+`LOG_DIR="/home/kyfaiyya/log/"`
+
+`mkdir -p "$LOG_DIR"`
+
+`echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size $MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
+
+## Penjelasan Script :
+
+`TIMESTAMP=$(date +"%Y%m%d%H%M%S")` Mengambil timestamp saat ini dalam format `YYYYMMDDHHmmss` untuk digunakan sebagai nama file log.
+
+`MEM_INFO=$(free -m | awk 'NR==2{print $2","$3","$4","$5","$6","$7}')`  Mengambil informasi memori menggunakan perintah free -m, kemudian menggunakan awk untuk mencetak baris kedua yang berisi informasi memori dalam format yang dipisahkan dengan koma.
+
+`SWAP_INFO=$(awk '/SwapTotal/{total=$2}/SwapFree/{free=$2}END{print total","(total-free)","free}' /proc/meminfo)`  Mengambil informasi swap menggunakan awk untuk memproses file /proc/meminfo dan mencetak total swap, swap yang digunakan, dan swap yang tersedia dalam format yang dipisahkan dengan koma.
+DEFAULT_PATH="/home/kyfaiyya" - Menetapkan path default yang akan dimonitor ukuran direktorinya.
+
+`PATH_SIZE=$(/usr/bin/du -sh "$DEFAULT_PATH" | /usr/bin/awk '{print $1}')` Menggunakan perintah du untuk mendapatkan ukuran direktori yang telah ditetapkan, dan awk untuk mencetak ukuran tersebut.
+
+`LOG_DIR="/home/kyfaiyya/log"`  Menetapkan direktori tempat menyimpan file log.
+
+`mkdir -p "$LOG_DIR"`  Membuat direktori log jika belum ada.
+
+`echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size $MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
+Menuliskan semua informasi metrik ke dalam file log baru dengan nama yang berisi timestamp.
