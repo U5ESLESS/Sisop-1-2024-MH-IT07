@@ -466,6 +466,23 @@ Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Kar
    - `filename_wo_ext="${file%.*}"` menghapus ekstensi
    - `decrypted_filename=$(echo $filename_wo_ext | iconv -f latin1 -t ascii)` file yang dihapus ekstensinya diubah formatnya dari hexadecimal ke ASCII menggunakan `iconv`, `-f latin1`, `-t ascii` untuk menunjukkan outputnya harus dalam ASCII
    - `decrypted_filename="$decrypted_filename.${file##*.}"` menambahkan kembali ekstensi yang sebelumnya dihapus untuk memastikan informasi dari file yang dideskripsi tidak berkurang
+  
+4. Mengganti dan mengatur ulang format
+
+        `while IFS=, read -r nama region elemen senjata; do
+                original_filename=$(grep -il "$nama" *)
+              mkdir -p "$region"
+              mv "$original_filename" "$region/$region - $nama - $elemen - $senjata.jpg"
+        done < list_character.csv`
+   - `while IFS=, read -r nama region elemen senjata; do`, `while` perulangan, `IFS=,` memisahkan menggunakan koma (,), `read -r nama region elemen senjata` membaca dan menetapkan nilai yang dipisahkan oleh koma(,)
+   - `original_filename=$(grep -il "$nama" *)` mencari nama file yang berisi nama karakter
+   - `mkdir -p "$region"` membuat direktori `region`
+   - `mv "$original_filename" "$region/$region - $nama - $elemen - $senjata.jpg"` memindahkan
+   - `done` mengakhiri perulangan
+   - `< list_character.csv` membaca perintah dalam file `list_character.csv`
+  
+- Jalankan menggunakan command `chmod +x awal.sh`
+- Eksekusi/run menggunakan command `./awal.sh`
 
 ### Readme
 ## Soal no 4
