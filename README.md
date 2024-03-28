@@ -412,6 +412,35 @@ Script ini adalah sebuah program shell yang berfungsi sebagai sistem login untuk
 Selesai
 
 ### Readme
+## Soal No.3
+Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Karena hobinya, dia ingin mengoleksi foto-foto karakter Genshin Impact. Suatu saat Yanuar memberikannya sebuah Link yang berisi koleksi kumpulan foto karakter dan sebuah clue yang mengarah ke penemuan gambar rahasia. Ternyata setiap nama file telah dienkripsi dengan menggunakan hexadecimal. Karena penasaran dengan apa yang dikatakan Yanuar, Alyss tidak menyerah dan mencoba untuk mengembalikan nama file tersebut kembali seperti semula.
+
+## Langkah Pengerjaan
+- Buat script `awal.sh` menggunakan command `nano awal.sh`
+- Isi dari script `awal.sh`
+  ```
+  #!/bin/bash
+  
+      wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1oGHdTf4_76_RacfmQIV4i7os4sGwa9vN" -O genshin.zip
+      unzip genshin.zip -d genshin_character
+
+      cd genshin_character
+        for file in *; do
+           filename_wo_ext="${file%.*}"
+           decrypted_filename=$(echo $filename_wo_ext | iconv -f latin1 -t ascii)
+           decrypted_filename="$decrypted_filename.${file##*.}"
+         mv "$file" "$decrypted_filename"
+    done
+
+      while IFS=, read -r nama region elemen senjata; do
+            original_filename=$(grep -il "$nama" *)
+          mkdir -p "$region"
+          mv "$original_filename" "$region/$region - $nama - $elemen - $senjata.jpg"
+    done < list_character.csv
+
+
+
+### Readme
 ## Soal no 4
 
 ## langkah Pengerjaan
