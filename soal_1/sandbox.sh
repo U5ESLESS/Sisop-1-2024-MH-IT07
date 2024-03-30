@@ -24,8 +24,15 @@ kategori_profit_tertinggi() {
 mencari_orderan() {
     local order
     order=$(awk -F',' 'NR>1 && $6=="adriaens" {print $2 "," $18}' sandbox.csv)
-    echo "Detail Pesanan Adriaens:"
-    echo "$order"
+
+    echo "Orderan atas nama Adriaens:"
+
+    if [[ -z "$order" ]]; then
+        echo "Orderan tidak tersedia"
+    else
+        echo "Detail Pesanan Adriaens:"
+        echo "$order"
+    fi
 }
 
  pembeli_dengan_sales_tertinggi
