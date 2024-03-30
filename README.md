@@ -526,7 +526,10 @@ Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya me
 
 `mkdir -p "$LOG_DIR"`
 
-`echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size $MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
+`echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
+`echo "$MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" >> "${LOG_DIR}metrics_${TIMESTAMP}.log"`
+
+`chmod 700 "${LOG_DIR}metrics_${TIMESTAMP}.log"` (Revisi)
 
 ### Penjelasan Script :
 
@@ -543,6 +546,14 @@ Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya me
 
 `mkdir -p "$LOG_DIR"`  Membuat direktori log jika belum ada.
 
-`echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size $MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
+`echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
+`echo "$MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" >> "${LOG_DIR}metrics_${TIMESTAMP}.log"`
 Menuliskan semua informasi metrik ke dalam file log baru dengan nama yang berisi timestamp.
-                                                                                                  
+
+`chmod 700 "${LOG_DIR}metrics_${TIMESTAMP}.log"`  ini menunjukkan bahwa pemilik file (user) memiliki izin untuk membaca, menulis, dan mengeksekusi file (7), sementara grup pengguna dan pengguna lainnya tidak memiliki izin apa pun (0). (Revisi)            
+
+## hasil dari minute_log.sh
+![image](https://github.com/U5ESLESS/Sisop-1-2024-MH-IT07/assets/151041878/fdf843f6-3742-4e95-a97d-796248b35514)
+
+## Isi dari metric.*.log
+![image](https://github.com/U5ESLESS/Sisop-1-2024-MH-IT07/assets/151041878/8161186c-e01e-45e8-a158-deb410629613)
