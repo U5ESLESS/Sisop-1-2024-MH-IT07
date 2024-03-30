@@ -171,6 +171,7 @@ Selesai
             continue
         fi  
 
+    ### REVISI
     ### fungsi script berikut untuk memvalidasi angka
         if ! [[ "$password" =~ [0-9] ]]; then
             echo "Password harus mengandung minimal 1 angka."
@@ -248,8 +249,9 @@ Selesai
         ./register.sh
         break
         ;;
-    
+
     2. Edit User
+    ### Note: edit user tidak bisa mengubah password
     ### fungsi script berikut untuk menu edit user
         read -p "Masukkan email user yang ingin diedit: " edit_email
 
