@@ -93,6 +93,26 @@
     - $6=="adriaens" = Memeriksa nilai pada kolom keenam ada nama "adriaens".
     - {print $2 "," $18} = Jika kolom keenam terdapat nama "adriaens" awk akan mencetak kolom kedua yang berisi kolom 2 dan 18 pada nama "adriaens"
 
+### REVISI
+
+    untuk revisi soal terakhir saya menggunakan command berikut:
+
+    `mencari_orderan() {
+    local order
+    order=$(awk -F',' 'NR>1 && $6=="adriaens" {print $2 "," $18}' sandbox.csv)
+
+    echo "Orderan atas nama Adriaens:"
+
+    if [[ -z "$order" ]]; then
+        echo "Orderan tidak tersedia"
+    else
+        echo "Detail Pesanan Adriaens:"
+        echo "$order"
+    fi
+    }`
+
+    dengan fungsi if else untuk memunculkan output 'orderan tidak terserdia' jika orderan nya tidak di temukan, tapi jika ada maka akan menampilkan orderan dari adriaens.
+
 6. untuk script terakhir saya membuat 4 line script seperti berikut: 
 
     `pembeli_dengan_sales_tertinggi`
@@ -108,314 +128,283 @@
 Selesai
 
 
-### README
+# README
 ## Soal 2
-Oppie merupakan seorang peneliti bom atom, ia ingin merekrut banyak peneliti lain untuk mengerjakan proyek bom atom nya, Oppie memiliki racikan bom atom rahasia yang hanya bisa diakses penelitinya yang akan diidentifikasi sebagai user, Oppie juga memiliki admin yang bertugas untuk memanajemen peneliti, bantulah oppie untuk membuat program yang akan memudahkan tugasnya Buatlah 2 program yaitu login.sh dan register.sh Setiap admin maupun user harus melakukan register terlebih dahulu menggunakan email, username, pertanyaan keamanan dan jawaban, dan password
 
-Username yang dibuat bebas, namun email bersifat unique. setiap email yang mengandung kata admin akan dikategorikan menjadi admin Karena resep bom atom ini sangat rahasia Oppie ingin password nya memuat keamanan tingkat tinggi Password tersebut harus di encrypt menggunakan base64 Password yang dibuat harus lebih dari 8 karakter Harus terdapat paling sedikit 1 huruf kapital dan 1 huruf kecil Harus terdapat paling sedikit 1 angka Karena Oppie akan memiliki banyak peneliti dan admin ia berniat untuk menyimpan seluruh data register yang ia lakukan ke dalam folder users file users.txt. Di dalam file tersebut, terdapat catatan seluruh email, username, pertanyaan keamanan dan jawaban, dan password hash yang telah ia buat. Setelah melakukan register, program harus bisa melakukan login. Login hanya perlu dilakukan menggunakan email dan password. Karena peneliti yang di rekrut oleh Oppie banyak yang sudah tua dan pelupa maka Oppie ingin ketika login akan ada pilihan lupa password dan akan keluar pertanyaan keamanan dan ketika dijawab dengan benar bisa memunculkan password
+### Langkah Pengerjaan
 
-Setelah user melakukan login akan keluar pesan sukses, namun setelah seorang admin melakukan login Oppie ingin agar admin bisa menambah, mengedit (username, pertanyaan keamanan dan jawaban, dan password), dan menghapus user untuk memudahkan kerjanya sebagai admin.
+1. Pertama-tama saya membuat file register.sh:
 
-Ketika admin ingin melakukan edit atau hapus user, maka akan keluar input email untuk identifikasi user yang akan di hapus atau di edit Oppie ingin programnya tercatat dengan baik, maka buatlah agar program bisa mencatat seluruh log ke dalam folder users file auth.log, baik login ataupun register. Format: [date] [type] [message] Type: REGISTER SUCCESS, REGISTER FAILED, LOGIN SUCCESS, LOGIN FAILED Ex: [23/09/17 13:18:02] [REGISTER SUCCESS] user [username] registered successfully [23/09/17 13:22:41] [LOGIN FAILED] ERROR Failed login attempt on user with email [email]
+    pertama saya menggunakan command berikut untuk membuat dan mengedit file register.sh
 
-# Membuat Registrasi Database Penelitian Atom
+    `nano register.sh`
 
-## Berikut adalah script nya
+2. langkah berikutnya saya mengisi file tersebut dengan `#!/bin/bash` dan script seperti berikut:
 
-    `#!/bin/bash
+    ### fungsi script berikut untuk Input data dan memasukan ke file user
+        read -p "Masukkan email: " email
+        read -p "Masukkan username: " username
+        read -p "Masukkan pertanyaan keamanan: " security_question
+        read -p "Masukkan jawaban pertanyaan keamanan: " security_answer
 
-echo "Selamat datang di database penelitian atom"
-
-# Input data dari user
-read -p "Masukkan email: " email
-read -p "Masukkan username: " username
-read -p "Masukkan pertanyaan keamanan: " security_question
-read -p "Masukkan jawaban pertanyaan keamanan: " security_answer
-
-# Cek apakah email mengandung kata 'admin'
-if [[ $email == *"admin"* ]]; then
-    role="admin"
-else
-    role="user"
-fi
-
-# Validasi password
-while true; do
-    read -s -p "Masukkan password (minimal 8 karakter, minimal mengandung 1 huruf kapital): " password
-    echo
-
-    # Validasi panjang password
-    if [ ${#password} -lt 8 ]; then
-        echo "Password harus lebih dari 8 karakter."
-        continue
-    fi
-
-    # Validasi huruf kapital dan kecil
-    if ! [[ "$password" =~ [A-Z] ]] || ! [[ "$password" =~ [a-z] ]]; then
-        echo "Password harus mengandung minimal 1 huruf kapital dan 1 huruf kecil."
-        continue
-    fi
-
-    # Encrypt password menggunakan base64
-    encrypted_password=$(echo -n "$password" | base64)
-
-    break
-done
-
-# Simpan data ke file
-echo "$email:$username:$security_question:$security_answer:$encrypted_password:$role" >> users.txt
-
-echo "Registrasi sukses"
-`
-
-## Deskripsi
-Script ini adalah sebuah program shell yang berfungsi untuk mendaftarkan pengguna ke dalam database penelitian atom. Program ini akan meminta pengguna untuk memasukkan informasi seperti email, username, pertanyaan keamanan, dan jawaban keamanan. Selain itu, program juga akan memvalidasi password yang dimasukkan oleh pengguna sesuai dengan kriteria yang telah ditentukan.
-
-## Cara Penggunaan
-
-1. **Selamat Datang**
-    - Program akan menampilkan pesan "Selamat datang di database penelitian atom" saat pertama kali dijalankan.
-
-2. **Input Data Pengguna**
-    - Program akan meminta pengguna untuk memasukkan data sebagai berikut:
-        - Email
-        - Username
-        - Pertanyaan keamanan
-        - Jawaban pertanyaan keamanan
-
-3. **Validasi Role**
-    - Jika email pengguna mengandung kata 'admin', maka peran (role) pengguna akan diatur sebagai 'admin', jika tidak maka peran akan diatur sebagai 'user'.
-
-4. **Validasi Password**
-    - Pengguna akan diminta untuk memasukkan password yang memenuhi kriteria berikut:
-        - Minimal 8 karakter
-        - Mengandung minimal 1 huruf kapital dan 1 huruf kecil
-
-5. **Enkripsi Password**
-    - Password yang dimasukkan oleh pengguna akan dienkripsi menggunakan base64 sebelum disimpan.
-
-6. **Simpan Data**
-    - Semua informasi yang dimasukkan oleh pengguna akan disimpan ke dalam file `users.txt` dalam format `email:username:pertanyaan_keamanan:jawaban_keamanan:password_terenkripsi:role`.
-
-7. **Pesan Registrasi**
-    - Setelah berhasil mendaftarkan pengguna, program akan menampilkan pesan "Registrasi sukses".
-
-## Catatan
-
-- Data pengguna yang sudah terdaftar akan disimpan dalam file `users.txt`.
-- Password pengguna disimpan dalam bentuk terenkripsi menggunakan base64.
-- Program ini memiliki validasi password untuk memastikan keamanan data pengguna.
-
-# Membuat Login Database Penelitian Atom
-
-## Berikut adalah script yang saya gunakan
-
-`#!/bin/bash
-
-while true; do
-    echo "Login Database Penelitian Atom"
-
-    PS3="Menu (masukkan angka): "
-    options=("Login" "Lupa Password" "Keluar")
-    select opt in "${options[@]}"; do
-        case $REPLY in
-            1) # Login
-                read -p "Masukkan Email: " email
-
-                # Cek user dalam list
-                user_data=$(grep "$email" users.txt)
-
-                # Validasi email
-                if [[ -z "$user_data" ]]; then
-                    echo "[`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $email" >> auth.log
-                    echo "Email Tidak Terdaftar"
-                    break
-                fi
-
-                # Ekstrak data user
-                username=$(echo "$user_data" | cut -d':' -f2)
-                security_question=$(echo "$user_data" | cut -d':' -f3)
-                security_answer=$(echo "$user_data" | cut -d':' -f4)
-                encrypted_password=$(echo "$user_data" | cut -d':' -f5)
-                role=$(echo "$user_data" | cut -d':' -f6)
-
-                # input  password
-                read -s -p "Masukkan Password: " password
-                echo
-
-                # Encrypt password menggunakan base64
-                encrypted_input_password=$(echo -n "$password" | base64)
-
-                # Validasi login
-                if [[ "$encrypted_input_password" == "$encrypted_password" ]]; then
-                    echo "[`date +'%d/%m/%y %H:%M:%S'`] [LOGIN SUCCESS] user $username logged in successfully" >> auth.log
-                    echo "Selamat Datang $username."
-
-                    if [[ "$role" == "admin" ]]; then
-                        # Menu Admin
-                        PS3="Menu Admin (masukkan angka): "
-                        admin_options=("Tambah User" "Edit User" "Hapus User" "List Email" "Keluar")
-                        select admin_opt in "${admin_options[@]}"; do
-                            case $REPLY in
-                                1) # Tambah User
-                                    ./register.sh
-                                    break
-                                    ;;
-                                2) # Edit User
-                                    read -p "Masukkan email user yang ingin diedit: " edit_email
-
-                                    # Cek user dalam list
-                                    user_data=$(grep "$edit_email" users.txt)
-
-                                    # Validasi email
-                                    if [[ -z "$user_data" ]]; then
-                                        echo "[`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $edit_email" >> auth.log
-                                        echo "Email Tidak Terdaftar."
-                                        break
-                                    fi
-
-                                    # Ekstrak data user untuk verifikasi
-                                    username=$(echo "$user_data" | cut -d':' -f2)
-                                    security_question=$(echo "$user_data" | cut -d':' -f3)
-                                    security_answer=$(echo "$user_data" | cut -d':' -f4)
-
-                                    # Verifikasi keamanan
-                                    read -p "$security_question: " answer
-
-                                    if [[ "$answer" != "$security_answer" ]]; then
-                                        echo "[`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $edit_email" >> auth.log
-                                        echo "Jawaban tidak valid."
-                                        break
-                                    fi
-
-                                    # Input data baru
-                                    read -p "Masukkan username baru: " new_username
-                                    read -p "Masukkan pertanyaan keamanan baru: " new_security_question
-                                    read -p "Masukkan jawaban baru: " new_security_answer
-
-                                    # Update data dalam file
-                                    sed -i "s/$edit_email:.*/$edit_email:$new_username:$new_security_question:$new_security_answer:$encrypted_password/" users.txt
-
-                                    echo "Data user berhasil diupdate."
-                                    break
-                                    ;;
-                                3) # Hapus User
-                                    read -p "Masukkan email user yang ingin dihapus: " delete_email
-
-                                    # Cek user dalam list
-                                    user_data=$(grep "$delete_email" users.txt)
-
-                                    # Validasi email
-                                    if [[ -z "$user_data" ]]; then
-                                        echo "[`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $delete_email" >> auth.log
-                                        echo "Email Tidak Terdaftar."
-                                        break
-                                    fi
-
-                                    # Ekstrak data user untuk verifikasi
-                                    username=$(echo "$user_data" | cut -d':' -f2)
-                                    security_question=$(echo "$user_data" | cut -d':' -f3)
-                                    security_answer=$(echo "$user_data" | cut -d':' -f4)
-
-                                    # Verifikasi keamanan
-                                    read -p "$security_question: " answer
-
-                                    if [[ "$answer" != "$security_answer" ]]; then
-                                        echo "[`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $delete_email" >> auth.log
-                                        echo "Jawaban tidak valid."
-                                        break
-                                    fi
-
-                                    # Hapus user dari file
-                                    sed -i "/$delete_email/d" users.txt
-
-                                    echo "User berhasil dihapus."
-                                    break
-                                    ;;
-                                4) # List Email
-                                    echo "Daftar Email Terdaftar:"
-                                    awk -F':' '{print $1}' users.txt
-                                    ;;
-                                5) # Keluar
-                                    exit 0
-                                    ;;
-                                *) # Pilihan invalid
-                                    echo "Tidak Valid."
-                                    ;;
-                            esac
-                        done
-                    else
-                        exit 0
-                    fi
-                else
-                    echo "[`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $email" >> auth.log
-                    echo "Password Salah."
-                    break
-                fi
-                ;;
-            2) # Lupa Password
-                # ... (Tidak ada perubahan di sini)
-                ;;
-            3) # Keluar
-                exit 0
-                ;;
-            *) # Pilihan invalid
-                echo "Tidak Valid."
-                ;;
-        esac
-    done
-done
-`
-
-## Deskripsi
-Script ini adalah sebuah program shell yang berfungsi sebagai sistem login untuk database penelitian atom. Program ini menyediakan tiga opsi utama: Login, Lupa Password, dan Keluar. Selain itu, untuk pengguna dengan peran 'admin', ada menu tambahan yang memungkinkan untuk menambah, mengedit, dan menghapus pengguna, serta melihat daftar email yang terdaftar.
-
-## Fitur dan Cara Penggunaan
-
-### 1. Login
-
-- **Deskripsi**: Opsi ini memungkinkan pengguna untuk login ke sistem menggunakan email dan password.
-- **Cara Penggunaan**: 
-    1. Pilih opsi `Login`.
-    2. Masukkan email pengguna.
-    3. Masukkan password pengguna.
-    4. Jika berhasil login, Anda akan diberikan akses sesuai dengan peran pengguna (user atau admin).
-
-### 2. Lupa Password
-
-- **Deskripsi**: Opsi ini digunakan untuk memulihkan password yang lupa dengan menjawab pertanyaan keamanan.
-- **Cara Penggunaan**: 
-    1. Pilih opsi `Lupa Password`.
-    2. Masukkan email pengguna.
-    3. Jawab pertanyaan keamanan untuk memulihkan password.
-
-### 3. Admin Menu
-
-- **Deskripsi**: Opsi tambahan untuk pengguna dengan peran 'admin'.
-- **Fitur**:
-    - **Tambah User**: Menambahkan pengguna baru ke dalam database.
-    - **Edit User**: Mengedit informasi pengguna yang sudah terdaftar.
-    - **Hapus User**: Menghapus pengguna dari database.
-    - **List Email**: Menampilkan daftar email yang terdaftar dalam database.
-- **Cara Penggunaan**: 
-    - Pilih opsi `Login`.
-    - Masukkan email dan password admin.
-    - Pilih opsi `Menu Admin`.
-    - Pilih salah satu opsi tambahan yang tersedia untuk admin.
-
-## Catatan
-
-- Data pengguna disimpan dalam file `users.txt` dengan format `email:username:security_question:security_answer:encrypted_password:role`.
-- Password disimpan dalam bentuk terenkripsi menggunakan base64.
-- Aktivitas login yang gagal akan dicatat dalam file `auth.log` beserta timestamp dan detail kesalahan.
-
-Selesai
-
-### Readme
+    ### fungsi script berikut untuk mengecek apakah email mengandung kata 'admin'
+        if [[ $email == *"admin"* ]]; then
+            role="admin"
+        else
+            role="user"
+        fi
+
+    ### fungsi script berikut untuk memvalidasi password
+        while true; do
+            read -s -p "Masukkan password (minimal 8 karakter, mengandung 1 huruf kapital, dan 1 angka): " password
+            echo
+
+    ### fungsi script berikut untuk memvalidasi panjang password
+        if [ ${#password} -lt 8 ]; then
+            echo "Password harus lebih dari 8 karakter."
+            continue
+        fi
+
+    ### fungsi script berikut untuk memvalidasi huruf kapital dan kecil
+        if ! [[ "$password" =~ [A-Z] ]] || ! [[ "$password" =~ [a-z] ]]; then
+            echo "Password harus mengandung minimal 1 huruf kapital dan 1 huruf kecil."
+            continue
+        fi  
+
+    ### fungsi script berikut untuk memvalidasi angka
+        if ! [[ "$password" =~ [0-9] ]]; then
+            echo "Password harus mengandung minimal 1 angka."
+            continue
+        fi
+
+    ### fungsi script berikut untuk encrypt password menggunakan base64
+            encrypted_password=$(echo -n "$password" | base64)
+
+            break
+        done
+
+    ### fungsi script berikut untuk menyimpan data ke file
+        echo "Registrasi: $email:$username:$security_question:$security_answer:$encrypted_password:$role" >> user
+
+        echo "Registrasi sukses"
+
+3. berikutnya saya membuat file login.sh 
+
+    berikut adalah isi script saya: 
+
+    ### fungsi script berikut untuk menampilkan dan memberi opsi
+        while true; do
+            echo "Login Database Penelitian Atom"
+
+            PS3="Menu (masukkan angka): "
+            options=("Login" "Lupa Password" "Keluar")
+            select opt in "${options[@]}"; do
+                case $REPLY in
+
+    ### fungsi script berikut untuk bagian script menu login
+    1. login
+        read -p "Masukkan Email: " email
+
+    ### fungsi script berikut untuk cek user dalam list
+        user_data=$(grep "$email" user)
+
+    ### fungsi script berikut untuk memvalidasi email
+        if [[ -z "$user_data" ]]; then
+            echo "loggin attempt: [`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $email" >> user
+            echo "Email Tidak Terdaftar"
+            break
+        fi
+
+    ### fungsi script berikut untuk menekstrak data user
+        username=$(echo "$user_data" | cut -d':' -f2)
+        security_question=$(echo "$user_data" | cut -d':' -f3)
+        security_answer=$(echo "$user_data" | cut -d':' -f4)
+        encrypted_password=$(echo "$user_data" | cut -d':' -f5)
+        role=$(echo "$user_data" | cut -d':' -f6)
+
+    ### fungsi script berikut untuk menginput password
+        read -s -p "Masukkan Password: " password
+        echo
+
+    ### fungsi script berikut untuk encrypt password menggunakan base64
+        encrypted_input_password=$(echo -n "$password" | base64)
+
+    ### fungsi script berikut untuk memvalidasi login
+        if [[ "$encrypted_input_password" == "$encrypted_password" ]]; then
+            echo "loggin attempt: [`date +'%d/%m/%y %H:%M:%S'`] [LOGIN SUCCESS] user $username logged in successfully" >> user
+            echo "Selamat Datang $username."
+
+            if [[ "$role" == "admin" ]]; then
+
+    ### fungsi script berikut untuk menampilkan menu Admin
+        PS3="Menu Admin (masukkan angka): "
+        admin_options=("Tambah User" "Edit User" "Hapus User" "List Email" "Keluar")
+        select admin_opt in "${admin_options[@]}"; do
+            case $REPLY in
+
+         
+    1. Tambah User
+    ### fungsi script berikut untuk menu menambahkan user
+        ./register.sh
+        break
+        ;;
+    
+    2. Edit User
+    ### fungsi script berikut untuk menu edit user
+        read -p "Masukkan email user yang ingin diedit: " edit_email
+
+    ### fungsi script berikut untuk cek user dalam list
+        user_data=$(grep "$edit_email" user)
+
+    ### fungsi script berikut untuk memvalidasi email
+        if [[ -z "$user_data" ]]; then
+            echo "login attempt: [`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $edit_email" >> user
+            echo "Email Tidak Terdaftar."
+            break
+        fi
+
+    ### fungsi script berikut untuk mengekstrak data user untuk verifikasi
+        username=$(echo "$user_data" | cut -d':' -f2)
+        security_question=$(echo "$user_data" | cut -d':' -f3)
+        security_answer=$(echo "$user_data" | cut -d':' -f4)
+
+    ### fungsi script berikut untuk memverifikasi keamanan
+        read -p "$security_question: " answer
+
+        if [[ "$answer" != "$security_answer" ]]; then
+            echo "loggin attempt: [`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $edit_email" >> user
+            echo "Jawaban tidak valid."
+            break
+        fi
+
+    ### fungsi script berikut untuk menginput data baru
+        read -p "Masukkan username baru: " new_username
+        read -p "Masukkan pertanyaan keamanan baru: " new_security_question
+        read -p "Masukkan jawaban baru: " new_security_answer
+
+    ### fungsi script berikut untuk update data dalam file
+        sed -i "edit attempt: s/$edit_email:.*/$edit_email:$new_username:$new_security_question:$new_security_answer:$encrypted_password#" user
+
+        echo "Data user berhasil diupdate."
+        break
+        ;;
+    3. Hapus User
+    ### fungsi script berikut untuk menampilkan menu hapus user
+        read -p "Masukkan email user yang ingin dihapus: " delete_email
+
+    ### fungsi script berikut untuk cek user dalam list
+        user_data=$(grep "$delete_email" user)
+
+    ### fungsi script berikut untuk memvalidasi email
+        if [[ -z "$user_data" ]]; then
+            echo "login attempt: [`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $delete_email" >> user
+            echo "Email Tidak Terdaftar."
+            break
+        fi
+
+    ### fungsi script berikut untuk mengekstrak data user untuk verifikasi
+        username=$(echo "$user_data" | cut -d':' -f2)
+        security_question=$(echo "$user_data" | cut -d':' -f3)
+        security_answer=$(echo "$user_data" | cut -d':' -f4)
+
+    ### fungsi script berikut untuk memverifikasi keamanan
+        read -p "$security_question: " answer
+
+        if [[ "$answer" != "$security_answer" ]]; then
+            echo "loggin attempt: [`date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $delete_email" >> user
+            echo "Jawaban tidak valid."
+            break
+        fi
+
+    ### fungsi script berikut untuk menghapus user dari file
+        sed -i "/$delete_email/d" user
+
+        echo "User berhasil dihapus."
+        break
+        ;;
+
+    4. List Email
+    ### fungsi script berikut untuk menampilkan menu list email
+        echo "Daftar Email Terdaftar:"
+        awk -F':' '{print $1}' user
+        ;;
+
+    5. Keluar
+    ### fungsi script berikut untuk keluar dari program
+        exit 0
+        ;;
+
+    6. Pilihan invalid
+    ### fungsi script berikut muncul saat menu yang dipilih tidak valid
+        echo "Tidak Valid."
+        ;;
+    
+    ### fungsi script berikut untuk mencatat percobaan login
+        echo "[loggin attempt: `date +'%d/%m/%y %H:%M:%S'`] [LOGIN FAILED] ERROR Failed login attempt on user with email $email" >> user
+        echo "Password Salah."
+        break
+        fi
+        ;;
+
+    ### REVISI
+
+    2. Lupa Password
+    ### fungsi script berikut untuk menu Lupa Password
+        read -p "Masukkan Email: " email
+
+    ### fungsi script berikut untuk cek user dalam list
+        user_data=$(grep "$email" user)
+
+    ### fungsi script berikut untuk memvalidasi email
+        if [[ -z "$user_data" ]]; then
+            echo "loggin attempt: [`date +'%d/%m/%y %H:%M:%S'`] [FORGOT PASSWORD FAILED] ERROR Failed password reset attempt on user with email $email" >> user
+            echo "Email Tidak Terdaftar"
+            break
+        fi
+
+    ### fungsi script berikut untuk mengekstrak data user
+        username=$(echo "$user_data" | cut -d':' -f2)
+        security_question=$(echo "$user_data" | cut -d':' -f3)
+        security_answer=$(echo "$user_data" | cut -d':' -f4)
+
+    ### fungsi script berikut untuk memverifikasi keamanan
+        read -p "$security_question: " answer
+
+        if [[ "$answer" != "$security_answer" ]]; then
+            echo "loggin attempt: [`date +'%d/%m/%y %H:%M:%S'`] [FORGOT PASSWORD FAILED] ERROR Failed password reset attempt on user with email $email" >> user
+            echo "Jawaban tidak valid."
+            break
+        fi
+
+    ### fungsi script berikut untuk mereset password
+        read -s -p "Masukkan Password Baru: " new_password
+        echo
+
+    ### fungsi script berikut untuk encrypt password menggunakan base64
+        encrypted_new_password=$(echo -n "$new_password" | base64)
+
+    ### fungsi script berikut untuk update password dalam file
+        sed -i "edit attempt: s/$email:.*:$security_question:$security_answer:$encrypted_password/$email:$username:$security_question:$security_answer:$encrypted_new_password#" user
+
+        echo "Password berhasil direset."
+        break
+        ;;
+
+    3. Keluar
+    ### fungsi script berikut untuk keluar dari program
+        exit 0
+        ;;
+
+    4. Pilihan invalid
+    ### fungsi script berikut akan berjalan saat user memilih menu yang tidak valid
+        echo "Tidak Valid."
+        ;;
+
+# Readme
 ## Soal No.3
 Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Karena hobinya, dia ingin mengoleksi foto-foto karakter Genshin Impact. Suatu saat Yanuar memberikannya sebuah Link yang berisi koleksi kumpulan foto karakter dan sebuah clue yang mengarah ke penemuan gambar rahasia. Ternyata setiap nama file telah dienkripsi dengan menggunakan hexadecimal. Karena penasaran dengan apa yang dikatakan Yanuar, Alyss tidak menyerah dan mencoba untuk mengembalikan nama file tersebut kembali seperti semula.
 
-## Langkah Pengerjaan
+### Langkah Pengerjaan
 - Buat script `awal.sh` menggunakan command `nano awal.sh`
 - Isi dari script `awal.sh`
   ```
@@ -438,7 +427,7 @@ Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Kar
           mv "$original_filename" "$region/$region - $nama - $elemen - $senjata.jpg"
     done < list_character.csv
 
-## Penjelasan Script
+### Penjelasan Script
 1. Unduh
 
         `wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1oGHdTf4_76_RacfmQIV4i7os4sGwa9vN" -O genshin.zip`
@@ -484,10 +473,10 @@ Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Kar
 - Jalankan menggunakan command `chmod +x awal.sh`
 - Eksekusi/run menggunakan command `./awal.sh`
 
-### Readme
+# Readme
 ## Soal no 4
 
-## langkah Pengerjaan
+### langkah Pengerjaan
  Pertama saya membuat sebuah direktory bernama log untuk menyimpan semua file log
 
  Kemudian di dalam direktori /home/kyfaiyya/log saya membuat sebuah file log bernama minute_log.sh dengan command `sudo nano minute_log.sh` yang akan di jadikan tempat script di eksekusi.
@@ -513,7 +502,7 @@ Berikut adalah langkah-langkah yang dilakukan oleh script:
 
 Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya menggunakan crontab untuk melakukan eksekusi terjadwal caranya adalah dengan `crontab -e` untuk menulis crontab baru, lalu mengisi dengan `* * * * * /home/kyfaiyya/log/minute_log.sh`. ini akan mengeksekusi file `minute_log.sh` setiap menit.
 
-## Berikut adalah scriptnya :
+### Berikut adalah scriptnya :
 
 `#!/bin/bash`
 
@@ -537,7 +526,7 @@ Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya me
 
 `echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size $MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
 
-## Penjelasan Script :
+### Penjelasan Script :
 
 `TIMESTAMP=$(date +"%Y%m%d%H%M%S")` Mengambil timestamp saat ini dalam format `YYYYMMDDHHmmss` untuk digunakan sebagai nama file log.
 
@@ -554,3 +543,4 @@ Kemudian pada poin (b) script harus berjalan otomatis setiap menit, maka saya me
 
 `echo "mem_total,mem_used,mem_free,mem_shared,mem_buff,mem_available,swap_total,swap_used,swap_free,path,path_size $MEM_INFO,$SWAP_INFO,$DEFAULT_PATH,$PATH_SIZE" > "${LOG_DIR}metrics_${TIMESTAMP}.log"`
 Menuliskan semua informasi metrik ke dalam file log baru dengan nama yang berisi timestamp.
+                                                                                                  
