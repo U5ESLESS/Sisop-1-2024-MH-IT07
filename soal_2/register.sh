@@ -17,7 +17,7 @@ fi
 
 # Validasi password
 while true; do
-    read -s -p "Masukkan password (minimal 8 karakter, minimal mengandung 1 huruf kapital): " password
+    read -s -p "Masukkan password (minimal 8 karakter, mengandung 1 huruf kapital, dan 1 angka): " password
     echo
 
     # Validasi panjang password
@@ -32,13 +32,21 @@ while true; do
         continue
     fi
 
+#revisi ----------------------------------------------------
+    # Validasi angka
+    if ! [[ "$password" =~ [0-9] ]]; then
+	echo "Password harus mengandung minimal 1 angka."
+	continue
+    fi
+
     # Encrypt password menggunakan base64
     encrypted_password=$(echo -n "$password" | base64)
 
     break
 done
 
+#revisi --------------------------------------------------------------------------------------------------
 # Simpan data ke file
-echo "$email:$username:$security_question:$security_answer:$encrypted_password:$role" >> users.txt
+echo "Registrasi: $email:$username:$security_question:$security_answer:$encrypted_password:$role" >> user
 
 echo "Registrasi sukses"
