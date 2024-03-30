@@ -555,5 +555,5 @@ Menuliskan semua informasi metrik ke dalam file log baru dengan nama yang berisi
 ## hasil dari minute_log.sh
 ![image](https://github.com/U5ESLESS/Sisop-1-2024-MH-IT07/assets/151041878/fdf843f6-3742-4e95-a97d-796248b35514)
 
-## Isi dari metric.*.log
+## Isi dari metrics.*.log
 ![image](https://github.com/U5ESLESS/Sisop-1-2024-MH-IT07/assets/151041878/8161186c-e01e-45e8-a158-deb410629613)
