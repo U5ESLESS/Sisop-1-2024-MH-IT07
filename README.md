@@ -438,14 +438,14 @@ Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Kar
    - `-O genshin.zip` file yang diunduh akan disimpan dengan nama `genshin.zip`
 2. Unzip
 
-       `unzip genshin.zip -d genshin_character`
+       unzip genshin.zip -d genshin_character
    - `unzip` perintah untuk unzip/ekstrak
    - `genshin.zip` file yang akan diunzip
    - `-d genshin_character` hasil dari ekstrak akan disimpan kedalam direktori `genshin_character`
   
 3. Decode file hexadecimal
 
-       `cd genshin_character
+       cd genshin_character
             for file in *; do
                filename_wo_ext="${file%.*}"
                decrypted_filename=$(echo $filename_wo_ext | iconv -f latin1 -t ascii)
