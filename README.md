@@ -432,7 +432,7 @@ Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Kar
 ### Penjelasan Script
 1. Unduh
 
-        `wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1oGHdTf4_76_RacfmQIV4i7os4sGwa9vN" -O genshin.zip`
+        wget --no-check-certificate "https://drive.google.com/uc?export=download&id=1oGHdTf4_76_RacfmQIV4i7os4sGwa9vN" -O genshin.zip
    - `wget` perintah untuk mengunduh
    - `"https://drive.google.com/uc?export=download&id=1oGHdTf4_76_RacfmQIV4i7os4sGwa9vN"` URL file yang akan diunduh
    - `-O genshin.zip` file yang diunduh akan disimpan dengan nama `genshin.zip`
