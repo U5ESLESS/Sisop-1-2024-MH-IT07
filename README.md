@@ -460,7 +460,7 @@ Alyss adalah seorang gamer yang sangat menyukai bermain game Genshin Impact. Kar
   
 4. Mengganti dan mengatur ulang format
 
-        `while IFS=, read -r nama region elemen senjata; do
+        while IFS=, read -r nama region elemen senjata; do
                 original_filename=$(grep -il "$nama" *)
               mkdir -p "$region"
               mv "$original_filename" "$region/$region - $nama - $elemen - $senjata.jpg"
